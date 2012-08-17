@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>engine.io test</title>
+    <script src="/engine.io.js"></script>
+    <script>
+
+      var socket = new eio.Socket({host: document.domain, port: document.location.port, transports: ['polling'], upgrade: false});
+
+      socket.on('open', function() {
+        document.getElementById('status').innerHTML = 'socket connected';
+      });
+      socket.on('close', function(reason, desc) {
+        document.getElementById('status').innerHTML = 'socket disconnected';
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id="status">initializing</div>
+  </body>
+</html>

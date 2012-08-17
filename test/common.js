@@ -3,7 +3,8 @@
  * Instrument.
  */
 
-var fs = require('fs');
+var fs = require('fs')
+  , path = require('path')
 
 if (process.env.DEBUG) {
   require.extensions['.js'] = function(mod, filename){
@@ -56,6 +57,12 @@ request = require('superagent');
 expect = require('expect.js');
 
 /**
+ * Expose `middler` global
+ */
+
+middler = require('middler');
+
+/**
  * Listen shortcut that fires a callback on an epheemal port.
  */
 
@@ -67,6 +74,21 @@ listen = function (opts, fn) {
 
   var e = eio.listen(null, opts, function () {
     fn(e.httpServer.address().port);
+  });
+
+  // Serve the client html and javascript.
+  middler(e.httpServer, function (req, res, next) {
+    if (req.url === '/engine.io.js') {
+      res.writeHead(200, {'Content-Type': 'text/javascript; charset=utf-8'});
+      fs.createReadStream(path.resolve(__dirname, '../node_modules/engine.io-client/dist/engine.io.js')).pipe(res);
+    }
+    else if (req.url === '/') {
+      res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+      fs.createReadStream(path.resolve(__dirname, './client.html')).pipe(res);
+    }
+    else {
+      next();
+    }
   });
 
   return e;

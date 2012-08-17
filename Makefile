@@ -8,6 +8,7 @@ test:
 		--require test/common \
 		--reporter $(REPORTER) \
 		--slow 500ms \
+		--timeout 20s \
 		--bail \
 		$(TESTS)
 
